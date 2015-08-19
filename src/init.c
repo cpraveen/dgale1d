@@ -44,6 +44,7 @@ CELL* Init()
    // Initialize cells
    for(i = 0; i < NC; i++)
    {
+      cell[i].active = true;
       cell[i].xl = xmin + i * dx;
       cell[i].xr = cell[i].xl + dx;
       cell[i].x = 0.5 * (cell[i].xl + cell[i].xr);

@@ -28,7 +28,8 @@ typedef struct CELL CELL;
 
 struct FACE
 {
-   REAL x, w;
+   REAL x; // location of face
+   REAL w; // velocity of face
    CELL *lcell, *rcell;
    bool active;
 };

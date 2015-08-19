@@ -14,40 +14,41 @@ void Project(CELL * cell)
 
    // Needs modification for periodic bc
    for(i = 0; i < NC; i++)
-   {
-      for(j = 0; j < NVAR; j++)
+      if(cell[i].active)
       {
-         dul[j] = cell[i].Un[j][0] - cell[i].lcell->Un[j][0];
-         dur[j] = cell[i].rcell->Un[j][0] - cell[i].Un[j][0];
-         u[j] = cell[i].Un[j][0];
-         ux[j] = fact * cell[i].Un[j][1];
-      }
-
-      EigMat(u, R, Ri);
-      Multi(Ri, ux);
-      Multi(Ri, dul);
-      Multi(Ri, dur);
-      for(j = 0; j < NVAR; j++)
-      {
-         if(fabs(ux[j]) <= Mfact * cell[i].h * cell[i].h)
-            uxb[j] = ux[j];
-         else
-            uxb[j] = minmod(ux[j], dul[j], dur[j]);
-      }
-      Multi(R, uxb);
-
-      for(j = 0; j < NVAR; j++)
-      {
-         uxb[j] = uxb[j] / fact;
-         if(cell[i].Un[j][1] != uxb[j])
+         for(j = 0; j < NVAR; j++)
          {
-            cell[i].Un[j][1] = uxb[j];
-            for(k = 2; k < cell[i].p; k++)
-               cell[i].Un[j][k] = 0.0;
+            dul[j] = cell[i].Un[j][0] - cell[i].lcell->Un[j][0];
+            dur[j] = cell[i].rcell->Un[j][0] - cell[i].Un[j][0];
+            u[j] = cell[i].Un[j][0];
+            ux[j] = fact * cell[i].Un[j][1];
          }
-
+         
+         EigMat(u, R, Ri);
+         Multi(Ri, ux);
+         Multi(Ri, dul);
+         Multi(Ri, dur);
+         for(j = 0; j < NVAR; j++)
+         {
+            if(fabs(ux[j]) <= Mfact * cell[i].h * cell[i].h)
+               uxb[j] = ux[j];
+            else
+               uxb[j] = minmod(ux[j], dul[j], dur[j]);
+         }
+         Multi(R, uxb);
+         
+         for(j = 0; j < NVAR; j++)
+         {
+            uxb[j] = uxb[j] / fact;
+            if(cell[i].Un[j][1] != uxb[j])
+            {
+               cell[i].Un[j][1] = uxb[j];
+               for(k = 2; k < cell[i].p; k++)
+                  cell[i].Un[j][k] = 0.0;
+            }
+            
+         }
       }
-   }
 }
 
 /* minmod limiter function */
