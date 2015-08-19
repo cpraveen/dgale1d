@@ -1,5 +1,5 @@
 cfl   0.80
-time  5.0e-1
+time  2.0
 nc    100
 pord  3
 nplt  3

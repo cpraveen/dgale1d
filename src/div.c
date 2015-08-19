@@ -6,7 +6,7 @@
 void Flux(CELL * cell, FACE * face)
 {
    UINT i, j, k, l;
-   REAL UL[NVAR], UR[NVAR], fl[NC + 1][NVAR], UG[NVAR], flg[NVAR], vl, vr, vx;
+   REAL UL[NVAR], UR[NVAR], fl[NVAR], UG[NVAR], flg[NVAR], v, vx;
 
    for(i = 0; i < NC; i++)
       for(j = 0; j < NVAR; j++)
@@ -16,46 +16,49 @@ void Flux(CELL * cell, FACE * face)
    /* Loop over cell faces and find flux, periodic bc */
    for(i = 0; i < NF; i++)
    {
-      CELL *lcell = face[i].lcell;
-      CELL *rcell = face[i].rcell;
-      
-      Uvect(lcell, face[i].x, UL);
-      Uvect(rcell, face[i].x, UR);
+      Uvect(face[i].lcell, face[i].x, UL);
+      Uvect(face[i].rcell, face[i].x, UR);
 
       switch (FLUX)
       {
          case LF:
-            LFFlux(UL, UR, fl[i]);
+            LFFlux(UL, UR, fl);
             break;
          case ECUSP:
-            ECUSPFlux(UL, UR, fl[i]);
+            ECUSPFlux(UL, UR, fl);
             break;
          case HLLC:
-            HLLCFlux(UL, UR, fl[i]);
+            HLLCFlux(UL, UR, fl);
             break;
          case AUSMDV:
-            AUSMDVFlux(UL, UR, fl[i]);
+            AUSMDVFlux(UL, UR, fl);
             break;
          case LFC:
-            LFCFlux(UL, UR, fl[i]);
+            LFCFlux(UL, UR, fl);
             break;
          default:
             printf("Error: Flux number %d not defined\n", FLUX);
             exit(0);
       }
-      //printf("%d %f %f %f\n", i, fl[i][0], fl[i][1], fl[i][2]);
-   }
-   //exit(0);
+      
+      /* Add interface flux to the cells */
 
-   /* Add interface flux to the cells */
-   for(i = 0; i < NC; i++)
-      for(j = 0; j < NVAR; j++)
-         for(k = 0; k < cell[i].p; k++)
-         {
-            vl = ShapeFun(cell[i].xl, &cell[i], k);
-            vr = ShapeFun(cell[i].xr, &cell[i], k);
-            cell[i].Re[j][k] += fl[i + 1][j] * vr - fl[i][j] * vl;
-         }
+      if(i > 0)
+         for(j = 0; j < NVAR; j++)
+            for(k = 0; k < face[i].lcell->p; k++)
+            {
+               v = ShapeFun(face[i].x, face[i].lcell, k);
+               face[i].lcell->Re[j][k] += fl[j] * v;
+            }
+      
+      if(i < NF-1)
+         for(j = 0; j < NVAR; j++)
+            for(k = 0; k < face[i].rcell->p; k++)
+            {
+               v = ShapeFun(face[i].x, face[i].rcell, k);
+               face[i].rcell->Re[j][k] -= fl[j] * v;
+            }
+   }
 
    /* Flux quadrature */
    for(i = 0; i < NC; i++)

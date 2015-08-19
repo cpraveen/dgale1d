@@ -25,9 +25,6 @@ int main()
    GaussInit();
    cell = Init();
    face = InitFaces(cell);
-   printf("aaa\n");
-   printf("%e\n", cell[0].x);
-   printf("bbb\n");
    
 //   Result(cell); exit(0);
 

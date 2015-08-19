@@ -13,7 +13,7 @@ void Project(CELL * cell)
    fact = sqrt(3.0);
 
    // Needs modification for periodic bc
-   for(i = 1; i < NC - 1; i++)
+   for(i = 0; i < NC; i++)
    {
       for(j = 0; j < NVAR; j++)
       {

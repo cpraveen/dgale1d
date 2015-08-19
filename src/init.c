@@ -141,7 +141,7 @@ FACE* InitFaces(CELL *cell)
    face[NF-1].lcell = &cell[NC-1]; // change this for periodic bc
    face[NF-1].rcell = &cell[NC-1];
    face[NF-1].active = true;
-   
+
    return face;
 }
 
