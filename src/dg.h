@@ -19,6 +19,9 @@
 
 #define GAMMA       1.4
 
+#define MIN(a,b)   ( (a) < (b) ? (a) : (b) )
+#define MAX(a,b)   ( (a) > (b) ? (a) : (b) )
+
 /* NC = number of cells
  * NF = number of faces = NC + 1
  * NVAR = number of variables

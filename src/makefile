@@ -8,7 +8,8 @@ LD            = $(CC)
 MAKEFILE      = makefile
 
 OBJS          = main.o init.o shape.o gauss.o flux.o atgauss.o \
-                save.o update.o div.o result.o project.o time.o
+                update.o div.o result.o project.o time.o \
+					 meshvel.o movegrid.o predictor.o
 
 PROGRAM       = dg
 

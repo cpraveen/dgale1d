@@ -12,16 +12,15 @@ void Project(CELL * cell)
 
    fact = sqrt(3.0);
 
-   // Needs modification for periodic bc
    for(i = 0; i < NC; i++)
       if(cell[i].active)
       {
          for(j = 0; j < NVAR; j++)
          {
-            dul[j] = cell[i].Un[j][0] - cell[i].lcell->Un[j][0];
-            dur[j] = cell[i].rcell->Un[j][0] - cell[i].Un[j][0];
-            u[j] = cell[i].Un[j][0];
-            ux[j] = fact * cell[i].Un[j][1];
+            dul[j] = cell[i].U[j][0] - cell[i].lcell->U[j][0];
+            dur[j] = cell[i].rcell->U[j][0] - cell[i].U[j][0];
+            u[j] = cell[i].U[j][0];
+            ux[j] = fact * cell[i].U[j][1];
          }
          
          EigMat(u, R, Ri);
@@ -40,11 +39,11 @@ void Project(CELL * cell)
          for(j = 0; j < NVAR; j++)
          {
             uxb[j] = uxb[j] / fact;
-            if(cell[i].Un[j][1] != uxb[j])
+            if(fabs(cell[i].U[j][1] - uxb[j]) > 1.0e-6)
             {
-               cell[i].Un[j][1] = uxb[j];
+               cell[i].U[j][1] = uxb[j];
                for(k = 2; k < cell[i].p; k++)
-                  cell[i].Un[j][k] = 0.0;
+                  cell[i].U[j][k] = 0.0;
             }
             
          }

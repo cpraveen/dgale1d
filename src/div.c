@@ -18,25 +18,14 @@ void Flux(CELL * cell, FACE * face)
    for(i = 0; i < NF; i++)
       if(face[i].active)
       {
-         Uvect(face[i].lcell, face[i].x, UL);
-         Uvect(face[i].rcell, face[i].x, UR);
+         // mid-point time integration
+         get_predictor(face[i].lcell, face[i].x, 0.5*dt, UL);
+         get_predictor(face[i].rcell, face[i].x, 0.5*dt, UR);
          
          switch (FLUX)
          {
             case LF:
-               LFFlux(UL, UR, fl);
-               break;
-            case ECUSP:
-               ECUSPFlux(UL, UR, fl);
-               break;
-            case HLLC:
-               HLLCFlux(UL, UR, fl);
-               break;
-            case AUSMDV:
-               AUSMDVFlux(UL, UR, fl);
-               break;
-            case LFC:
-               LFCFlux(UL, UR, fl);
+               LFFlux(UL, UR, face[i].w, fl);
                break;
             default:
                printf("Error: Flux number %d not defined\n", FLUX);
@@ -67,8 +56,9 @@ void Flux(CELL * cell, FACE * face)
       if(cell[i].active)
          for(j = 0; j < cell[i].ng; j++)
          {
-            Uvect(&cell[i], cell[i].xg[j], UG);
-            EulerFlux(UG, flg);
+            double w = GetMeshVel(&cell[i], cell[i].xg[j]);
+            get_predictor(&cell[i], cell[i].xg[j], 0.5*dt, UG);
+            EulerFlux(UG, w, flg);
             for(k = 0; k < cell[i].p; k++) {
                vx = ShapeFunDeriv(cell[i].xg[j], &cell[i], k);
                for(l = 0; l < NVAR; l++)

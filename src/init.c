@@ -59,13 +59,11 @@ CELL* Init()
       cell[i].xg = (REAL *) calloc(cell[i].ng, sizeof(REAL));
       GaussPoints(&cell[i]);
 
-      cell[i].Un = (REAL **) calloc(NVAR, sizeof(REAL *));
-      cell[i].Uo = (REAL **) calloc(NVAR, sizeof(REAL *));
+      cell[i].U  = (REAL **) calloc(NVAR, sizeof(REAL *));
       cell[i].Re = (REAL **) calloc(NVAR, sizeof(REAL *));
       for(j = 0; j < NVAR; j++)
       {
-         cell[i].Un[j] = (REAL *) calloc(cell[i].p, sizeof(REAL));
-         cell[i].Uo[j] = (REAL *) calloc(cell[i].p, sizeof(REAL));
+         cell[i].U[j]  = (REAL *) calloc(cell[i].p, sizeof(REAL));
          cell[i].Re[j] = (REAL *) calloc(cell[i].p, sizeof(REAL));
       }
       
@@ -93,7 +91,7 @@ CELL* Init()
 
       for(j = 0; j < NVAR; j++)
          for(k = 0; k < cell[i].p; k++)
-            cell[i].Un[j][k] = 0.0;
+            cell[i].U[j][k] = 0.0;
 
       for(j = 0; j < cell[i].p; j++)
          for(k = 0; k < cell[i].ng; k++)
@@ -101,7 +99,7 @@ CELL* Init()
             InitCondEuler(cell[i].xg[k], U);
             v = ShapeFun(cell[i].xg[k], &cell[i], j);
             for(l = 0; l < NVAR; l++)
-               cell[i].Un[l][j] += 0.5 * U[l] * v * wg[cell[i].ng - 1][k];
+               cell[i].U[l][j] += 0.5 * U[l] * v * wg[cell[i].ng - 1][k];
          }
    }
 

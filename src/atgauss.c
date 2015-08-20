@@ -10,7 +10,7 @@ void UatGauss(CELL * cell, REAL ** U)
       {
          U[ig][iv] = 0.0;
          for(ip = 0; ip < cell->p; ip++)
-            U[ig][iv] += cell->Uo[iv][ip] * ShapeFun(cell->xg[ig], cell, ip);
+            U[ig][iv] += cell->U[iv][ip] * ShapeFun(cell->xg[ig], cell, ip);
       }
 }
 
@@ -22,6 +22,6 @@ void Uvect(CELL * cell, REAL x, REAL * U)
    {
       U[iv] = 0.0;
       for(ip = 0; ip < cell->p; ip++)
-         U[iv] += cell->Un[iv][ip] * ShapeFun(x, cell, ip);
+         U[iv] += cell->U[iv][ip] * ShapeFun(x, cell, ip);
    }
 }

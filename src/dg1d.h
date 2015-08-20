@@ -15,12 +15,13 @@ REAL xmin, xmax;
 REAL d_left, u_left, p_left;
 REAL d_right, u_right, p_right;
 REAL Mfact;
+REAL dxmin, dxmax;
 
 struct CELL
 {
    REAL x, xl, xr, wl, wr, h, *xg;
    UINT p, ng;
-   REAL **Un, **Uo, **Re;
+   REAL **U, **Re;
    struct CELL *lcell, *rcell;
    bool active;
 };
@@ -41,9 +42,11 @@ REAL ShapeFun (REAL, CELL *, UINT);
 REAL ShapeFunDeriv (REAL, CELL *, UINT);
 
 void Uvect (CELL * cell, REAL x, REAL * U);
-void EulerFlux (REAL * U, REAL * flux);
+void get_predictor(CELL *cell, REAL x, REAL t, REAL * U);
+void EulerFlux (REAL * U, REAL w, REAL * flux);
+void Jacobian (REAL* U, REAL A[][3]);
 void RoeFlux (REAL * Ul, REAL * Ur, REAL * flux);
-void LFFlux (REAL * Ul, REAL * Ur, REAL * flux);
+void LFFlux (REAL * Ul, REAL * Ur, REAL w, REAL * flux);
 void ECUSPFlux (REAL * Ul, REAL * Ur, REAL * flux);
 void HLLCFlux (REAL * Ul, REAL * Ur, REAL * flux);
 void AUSMDVFlux (REAL * Ul, REAL * Ur, REAL * flux);
@@ -51,5 +54,8 @@ void LFCFlux (REAL * Ul, REAL * Ur, REAL * flux);
 
 void EigMat (REAL *, REAL[][3], REAL[][3]);
 void Multi (REAL[][3], REAL *);
+
+void MoveGrid(CELL*, FACE*);
+REAL GetMeshVel(CELL* cell, REAL x);
 
 #endif

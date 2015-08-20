@@ -5,12 +5,14 @@
 
 void Result(CELL * cell)
 {
-   FILE *fp1, *fp2;
+   FILE *fp1, *fp2, *fp3;
    UINT i, j;
-   REAL dx, x, U[NVAR], d, u, p, c, m;
+   REAL dx, x, U[NVAR], d, u, p, c, m, w;
    
    fp1 = fopen("out", "w");
    fp2 = fopen("sol", "w");
+   fp3 = fopen("h", "w");
+
    for(i = 0; i < NC; i++)
       if(cell[i].active)
       {
@@ -30,12 +32,15 @@ void Result(CELL * cell)
             p = (GAMMA - 1.0) * (U[2] - 0.5 * d * u * u);
             c = sqrt(GAMMA * p / d);
             m = u / c;
+            w = GetMeshVel(&cell[i], x);
             fprintf(fp1, "%f %f %f %f\n", x, U[0], U[1], U[2]);
-            fprintf(fp2, "%f %f %f %f %f\n", x, d, u, p, m);
+            fprintf(fp2, "%f %f %f %f %f %f\n", x, d, u, p, m, w);
          }
          fprintf(fp1, "\n");
          fprintf(fp2, "\n");
+         fprintf(fp3, "%d %e %e\n", i, cell[i].x, cell[i].h);
       }
    fclose(fp1);
    fclose(fp2);
+   fclose(fp3);
 }

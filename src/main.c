@@ -7,20 +7,21 @@ int main()
 {
    CELL* Init();
    FACE* InitFaces(CELL*);
-   void TimeStep(CELL *);
-   void SaveSol(CELL *);
-   void Flux(CELL *, FACE * face);
-   void Update(UINT, CELL *);
-   void Project(CELL *);
-   void Result(CELL *);
+   void TimeStep(CELL*);
+   void SaveSol(CELL*);
+   void Flux(CELL*, FACE*);
+   void Update(CELL*, FACE*);
+   void Project(CELL*);
+   void Result(CELL*);
+   void MeshVel(FACE*);
 
-   UINT iter, rk;
+   UINT iter;
    REAL time;
    CELL *cell;
    FACE *face;
 
    NVAR = 3;                    /* Number of variables */
-   RK = 3;                      /* Number of Runge-Kutta stages */
+   RK   = 3;                    /* Number of Runge-Kutta stages */
 
    GaussInit();
    cell = Init();
@@ -28,26 +29,32 @@ int main()
    
 //   Result(cell); exit(0);
 
-   cfl = cfl / PORD;
+   cfl = cfl/(2*(PORD-1)+1);
    time = 0.0;
    iter = 0;
 
    printf("Beginning of iterations ...\n");
    while(time < finaltime)
    {
-      SaveSol(cell);
+      // compute mesh velocity
+      MeshVel(face);
+      
       TimeStep(cell);
       if(time + dt > finaltime)
          dt = finaltime - time;
-      for(rk = 0; rk < RK; rk++)
-      {
-         Flux(cell, face);
-         Update(rk, cell);
-         Project(cell);
-      }
+      
+      // Assemble residual
+      Flux (cell, face);
+      // update solution
+      Update (cell, face);
+      // apply limiter
+      Project (cell);
+
+      // merge small cells
+      
       time += dt;
       ++iter;
-      printf("%8d  %18.6e %18.6e\n", iter, dt, time);
+      printf("%8d  %16.6e %16.6e %16.6e %16.6e\n", iter, dt, time, dxmin, dxmax);
    }
    Result(cell);
 
