@@ -2,7 +2,7 @@ cfl   0.80
 time  2.0
 nc    100
 pord  2
-nplt  3
+nplt  2
 flux  1
 M     0.0
 range -5.0 5.0

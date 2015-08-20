@@ -9,13 +9,22 @@ void Result(CELL * cell)
    UINT i, j;
    REAL dx, x, U[NVAR], d, u, p, c, m, w;
    
-   fp1 = fopen("out", "w");
+   fp1 = fopen("avg", "w");
    fp2 = fopen("sol", "w");
    fp3 = fopen("h", "w");
 
    for(i = 0; i < NC; i++)
       if(cell[i].active)
       {
+         // average solution
+         d = cell[i].U[0][0];
+         u = cell[i].U[1][0] / d;
+         p = (GAMMA - 1.0) * (cell[i].U[2][0] - 0.5 * d * u * u);
+         c = sqrt(GAMMA * p / d);
+         m = u / c;
+         fprintf(fp1, "%e %e %e %e %e\n", cell[i].x, d, u, p, m);
+
+         // more detailed solution evaluated at NPLT points inside cell
          if(NPLT == 1)
             dx = 0.5 * cell[i].h;
          else
@@ -33,11 +42,11 @@ void Result(CELL * cell)
             c = sqrt(GAMMA * p / d);
             m = u / c;
             w = GetMeshVel(&cell[i], x);
-            fprintf(fp1, "%f %f %f %f\n", x, U[0], U[1], U[2]);
             fprintf(fp2, "%f %f %f %f %f %f\n", x, d, u, p, m, w);
          }
-         fprintf(fp1, "\n");
          fprintf(fp2, "\n");
+         
+         // mesh size
          fprintf(fp3, "%d %e %e\n", i, cell[i].x, cell[i].h);
       }
    fclose(fp1);
