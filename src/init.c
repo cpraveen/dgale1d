@@ -15,15 +15,6 @@ CELL* Init()
 
    ReadInput();
 
-   /* Coefficients for RK3 */
-   ark[0] = 0.0;
-   ark[1] = 3.0 / 4.0;
-   ark[2] = 1.0 / 3.0;
-
-   brk[0] = 1.0;
-   brk[1] = 1.0 / 4.0;
-   brk[2] = 2.0 / 3.0;
-
    // PORD = degree + 1
    NG = PORD;
 
@@ -161,6 +152,7 @@ void ReadInput()
    fscanf(fp, "%s%d", dummy, &NPLT);
    fscanf(fp, "%s%d", dummy, &FLUX);
    fscanf(fp, "%s%lf", dummy, &Mfact);
+   fscanf(fp, "%s%d", dummy, &ALE);
    fscanf(fp, "%s%lf%lf", dummy, &xmin, &xmax);
    fscanf(fp, "%s%lf", dummy, &XS);
    fscanf(fp, "%s%lf%lf%lf", dummy, &d_left, &u_left, &p_left);

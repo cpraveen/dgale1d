@@ -5,23 +5,10 @@
 
 int main()
 {
-   CELL* Init();
-   FACE* InitFaces(CELL*);
-   void TimeStep(CELL*);
-   void SaveSol(CELL*);
-   void Flux(CELL*, FACE*);
-   void Update(CELL*, FACE*);
-   void Project(CELL*);
-   void Result(CELL*);
-   void MeshVel(FACE*);
-
    UINT iter;
    REAL time;
    CELL *cell;
    FACE *face;
-
-   NVAR = 3;                    /* Number of variables */
-   RK   = 3;                    /* Number of Runge-Kutta stages */
 
    GaussInit();
    cell = Init();
@@ -50,7 +37,7 @@ int main()
       // apply limiter
       Project (cell);
 
-      // merge small cells
+      // merge small cells, divide large
       
       time += dt;
       ++iter;

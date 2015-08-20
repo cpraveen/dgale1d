@@ -9,6 +9,8 @@ void MeshVel(FACE* face)
    UINT siter=1; // no of smoothing iterations
    REAL UL[NVAR], UR[NVAR], UA[NVAR], vl, vr;
    
+   if(ALE==0) return;
+   
    face[0].w    = 0.0;
    face[NF-1].w = 0.0;
    

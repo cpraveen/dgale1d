@@ -15,6 +15,7 @@ REAL xmin, xmax;
 REAL d_left, u_left, p_left;
 REAL d_right, u_right, p_right;
 REAL Mfact;
+UINT ALE;
 REAL dxmin, dxmax;
 
 struct CELL
@@ -35,6 +36,16 @@ struct FACE
    bool active;
 };
 typedef struct FACE FACE;
+
+CELL* Init();
+FACE* InitFaces(CELL*);
+void TimeStep(CELL*);
+void SaveSol(CELL*);
+void Flux(CELL*, FACE*);
+void Update(CELL*, FACE*);
+void Project(CELL*);
+void Result(CELL*);
+void MeshVel(FACE*);
 
 void GaussInit ();
 void GaussPoints (CELL *);

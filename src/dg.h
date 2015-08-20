@@ -18,6 +18,7 @@
 #define BIQUADRATIC 5
 
 #define GAMMA       1.4
+#define NVAR        3
 
 #define MIN(a,b)   ( (a) < (b) ? (a) : (b) )
 #define MAX(a,b)   ( (a) > (b) ? (a) : (b) )
@@ -27,13 +28,11 @@
  * NVAR = number of variables
  * NG = number of Gauss integration points
  */
-UINT NC, NF, NVAR, NG, RK, PORD, FLUX, NPLT;
+UINT NC, NF, NG, PORD, FLUX, NPLT;
 
 /* xg = Gauss integration points in [-1,+1]
  * wg = corresponding weights
  */
 REAL xg[10][10], wg[10][10];
-
-REAL ark[3], brk[3];
 
 #endif
