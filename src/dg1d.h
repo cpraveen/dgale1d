@@ -56,7 +56,7 @@ void Uvect (CELL * cell, REAL x, REAL * U);
 void get_predictor(CELL *cell, REAL x, REAL t, REAL * U);
 void EulerFlux (REAL * U, REAL w, REAL * flux);
 void Jacobian (REAL* U, REAL A[][3]);
-void RoeFlux (REAL * Ul, REAL * Ur, REAL * flux);
+void RoeFlux (REAL * Ul, REAL * Ur, REAL w, REAL * flux);
 void LFFlux (REAL * Ul, REAL * Ur, REAL w, REAL * flux);
 void ECUSPFlux (REAL * Ul, REAL * Ur, REAL * flux);
 void HLLCFlux (REAL * Ul, REAL * Ur, REAL * flux);

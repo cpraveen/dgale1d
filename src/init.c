@@ -176,12 +176,14 @@ void InitCondEuler(REAL x, REAL * U)
 {
    REAL d, u, p;
 
-   if(x < XS) {
+   if(x < XS)
+   {
       d = d_left;
       u = u_left;
       p = p_left;
    }
-   else {
+   else
+   {
       d = d_right;
       u = u_right;
       p = p_right;

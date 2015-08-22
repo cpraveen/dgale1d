@@ -10,7 +10,7 @@ REAL MaxEigVal(REAL *, REAL *, REAL);
 //-----------------------------------------------------------------------------
 /* Compute flux for 1-d euler equation given conserved vector */
 //-----------------------------------------------------------------------------
-void EulerFlux(REAL * U, double w, REAL * flux)
+void EulerFlux(REAL * U, REAL w, REAL * flux)
 {
    REAL p;
 
@@ -36,7 +36,7 @@ void Jacobian(REAL *U, REAL A[][3])
 //-----------------------------------------------------------------------------
 /* Roe flux for 1-d euler equations */
 //-----------------------------------------------------------------------------
-void RoeFlux(REAL * Ul, REAL * Ur, REAL * flux)
+void RoeFlux(REAL * Ul, REAL * Ur, REAL w, REAL * flux)
 {
    printf("Oops: RoeFlux not implemented yet !!!\n");
    exit(0);
@@ -45,7 +45,7 @@ void RoeFlux(REAL * Ul, REAL * Ur, REAL * flux)
 //-----------------------------------------------------------------------------
 /* Lax-Friedrichs flux for 1-d euler equations */
 //-----------------------------------------------------------------------------
-void LFFlux(REAL * Ul, REAL * Ur, double w, REAL * flux)
+void LFFlux(REAL * Ul, REAL * Ur, REAL w, REAL * flux)
 {
    UINT i;
    REAL Fl[NVAR], Fr[NVAR], lam;
@@ -62,7 +62,7 @@ void LFFlux(REAL * Ul, REAL * Ur, double w, REAL * flux)
 //-----------------------------------------------------------------------------
 /* Maximum eigenvalue of left and right states */
 //-----------------------------------------------------------------------------
-REAL MaxEigVal(REAL * Ul, REAL * Ur, double w)
+REAL MaxEigVal(REAL * Ul, REAL * Ur, REAL w)
 {
    REAL dl, ul, pl, al, ll, dr, ur, pr, ar, lr;
 
