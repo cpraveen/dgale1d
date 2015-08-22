@@ -1,0 +1,22 @@
+* Compile the code
+
+cd dgale1d/src
+make
+
+* Edit input file inp.dat
+
+* Run the code
+
+cd dgale1d/run
+../src/dgale1d
+
+It creates three files
+
+avg : contains cell average solution
+sol : contains detailed solution
+h   : contains cell sizes
+
+* Plot the results
+
+gnuplot 'plot.gnu'
+open plot.ps
