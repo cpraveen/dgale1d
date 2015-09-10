@@ -4,6 +4,86 @@
 #include "dg.h"
 #include "dg1d.h"
 
+void SetTestCaseData();
+void InitCondShocktube(REAL x, REAL * U);
+void InitCondBlast(REAL x, REAL * U);
+void InitCondShuOsher(REAL x, REAL * U);
+
+void SetTestCaseData()
+{
+   if(test_case == SOD)
+   {
+      printf("Setting SOD test case\n");
+      xmin = 0.0;
+      xmax = 1.0;
+      XS   = 0.5;
+      finaltime = 0.2;
+      
+      d_left = 1.0;   u_left = 0.0; p_left = 1.0;
+      d_right= 0.125; u_right= 0.0; p_right= 0.1;
+      bc_left = FREE;
+      bc_right= FREE;
+   }
+   else if(test_case == BLAST)
+   {
+      printf("Setting BLAST test case\n");
+      xmin = 0.0;
+      xmax = 1.0;
+      finaltime = 0.038;
+      // reflecting bc
+   }
+   else if(test_case == LAX)
+   {
+      printf("Setting LAX test case\n");
+      xmin = -5.0;
+      xmax = +5.0;
+      XS = 0.0;
+      finaltime = 1.3;
+      d_left  = 0.445;
+      d_right = 0.5;
+      
+      u_left  = 0.698;
+      u_right = 0.0;
+      
+      p_left  = 3.528;
+      p_right = 0.571;
+      bc_left = FREE;
+      bc_right= FREE;
+   }
+   else if(test_case == LOWD)
+   {
+      printf("Setting LOWD test case\n");
+      xmin = 0.0;
+      xmax = 1.0;
+      XS = 0.5;
+      finaltime = 0.15;
+      d_left  = 1.0;
+      d_right = 1.0;
+      
+      u_left  = -2.0;
+      u_right =  2.0;
+      
+      p_left  = 0.4;
+      p_right = 0.4;
+      bc_left = FREE;
+      bc_right= FREE;
+   }
+   else if(test_case == SHUOSHER)
+   {
+      printf("Setting SHUOSHER test case\n");
+      xmin = -10.0;
+      xmax =  5.0;
+      finaltime = 1.8;
+      bc_left = FREE;
+      bc_right= FREE;
+   }
+   else
+   {
+      printf("Error in SetTestCaseData\n");
+      exit(0);
+   }
+}
+
 /* Allocate memory for main structure and set initial conditions */
 CELL* Init()
 {
@@ -14,8 +94,10 @@ CELL* Init()
    CELL *cell;
 
    ReadInput();
+   SetTestCaseData();
 
-   // PORD = degree + 1
+   // Note that PORD = degree + 1
+   // Number of Gauss quadrature points
    NG = PORD;
 
    printf("Allocating memory and setting initial condition ...\n");
@@ -140,57 +222,97 @@ void ReadInput()
    FILE *fp;
    char dummy[100];
    fp = fopen("inp.dat", "r");
-   if(fp == NULL) {
+   if(fp == NULL)
+   {
       printf("Error: Could not open inp.dat\n");
       exit(0);
    }
    
    fscanf(fp, "%s%lf", dummy, &cfl);
-   fscanf(fp, "%s%lf", dummy, &finaltime);
    fscanf(fp, "%s%d", dummy, &NC);
    fscanf(fp, "%s%d", dummy, &PORD);
    fscanf(fp, "%s%d", dummy, &NPLT);
    fscanf(fp, "%s%d", dummy, &FLUX);
    fscanf(fp, "%s%lf", dummy, &Mfact);
    fscanf(fp, "%s%d", dummy, &ALE);
-   fscanf(fp, "%s%lf%lf", dummy, &xmin, &xmax);
-   fscanf(fp, "%s%lf", dummy, &XS);
-   fscanf(fp, "%s%lf%lf%lf", dummy, &d_left, &u_left, &p_left);
-   fscanf(fp, "%s%lf%lf%lf", dummy, &d_right, &u_right, &p_right);
+   fscanf(fp, "%s%d", dummy, &test_case);
    fclose(fp);
    
    NF = NC + 1;
 }
 
-/* Initial condition for Burgers equation */
-REAL InitCondBurger(REAL x)
-{
-   if(x < 0.5)
-      return 1.0;
-   else
-      return 0.0;
-}
-
 /* Initial condition for Euler equation */
 void InitCondEuler(REAL x, REAL * U)
 {
-   REAL d, u, p;
+   REAL V[NVAR];
+   
+   if(test_case == SOD || test_case == LAX || test_case == LOWD)
+      InitCondShocktube(x, V);
+   else if(test_case == BLAST)
+      InitCondBlast(x, V);
+   else if(test_case == SHUOSHER)
+      InitCondShuOsher(x, V);
+   else
+   {
+      printf("Error: Unknown test case\n");
+      exit(0);
+   }
+   
+   U[0] = V[0];
+   U[1] = V[0] * V[1];
+   U[2] = V[2] / (GAMMA - 1.0) + 0.5 * V[0] * V[1] * V[1];
+}
 
+void InitCondShocktube(REAL x, REAL * V)
+{
    if(x < XS)
    {
-      d = d_left;
-      u = u_left;
-      p = p_left;
+      V[0] = d_left;
+      V[1] = u_left;
+      V[2] = p_left;
    }
    else
    {
-      d = d_right;
-      u = u_right;
-      p = p_right;
+      V[0] = d_right;
+      V[1] = u_right;
+      V[2] = p_right;
    }
+}
 
-   U[0] = d;
-   //U[0] = sin(M_PI*x);
-   U[1] = d * u;
-   U[2] = p / (GAMMA - 1.0) + 0.5 * d * u * u;
+void InitCondBlast(REAL x, REAL * V)
+{
+   if(x < 0.1)
+   {
+      V[0] = 1.0;
+      V[1] = 0.0;
+      V[2] = 1000.0;
+   }
+   else if(x > 0.9)
+   {
+      V[0] = 1.0;
+      V[1] = 0.0;
+      V[2] = 100.0;
+   }
+   else
+   {
+      V[0] = 1.0;
+      V[1] = 0.0;
+      V[2] = 0.01;
+   }
+}
+
+void InitCondShuOsher(REAL x, REAL * V)
+{
+   if(x < -4.0)
+   {
+      V[0] = 3.857143;
+      V[1] = 2.629369;
+      V[2] = 10.333333;
+   }
+   else
+   {
+      V[0] = 1 + 0.2*sin(5.0*x);
+      V[1] = 0;
+      V[2] = 1;
+   }
 }

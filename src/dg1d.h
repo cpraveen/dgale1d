@@ -1,5 +1,4 @@
 #ifndef _DG1D
-
 #define _DG1D  1
 
 #include <stdbool.h>
@@ -7,6 +6,18 @@
 #define LINCON 1
 #define BURGER 2
 #define EULER  3
+
+// Available test cases
+#define SOD      0
+#define BLAST    1
+#define LAX      2
+#define LOWD     3
+#define SHUOSHER 4
+
+// Type of bc
+#define FREE      0
+#define FIXED     1
+#define PERIODIC  2
 
 REAL mass0, mass1[2][2], mass2[3][3], mass3[4][4], mass4[5][5], mass5[6][6];
 REAL cfl, dt, finaltime;
@@ -17,6 +28,8 @@ REAL d_right, u_right, p_right;
 REAL Mfact;
 UINT ALE;
 REAL dxmin, dxmax;
+UINT test_case;
+UINT bc_left, bc_right;
 
 struct CELL
 {

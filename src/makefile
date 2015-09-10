@@ -1,5 +1,5 @@
 # Set the C compiler
-CC            = gcc -Wall
+CC            = gcc -Wall -O3
 
 HDRS	        = dg.h dg1d.h
 
@@ -14,6 +14,9 @@ OBJS          = main.o init.o shape.o gauss.o flux.o atgauss.o \
 PROGRAM       = dg
 
 all:            $(PROGRAM)
+
+.c.o: $(HDRS)
+	$(CC) -c $*.c
 
 $(PROGRAM):     $(OBJS)
 				        $(LD) -o $(PROGRAM) $(OBJS) -lm

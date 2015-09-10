@@ -6,9 +6,13 @@
 void MoveGrid(CELL* cell, FACE* face)
 {
    UINT i;
-   
-   // Fixed boundaries, needs to be changed for periodic case
-   
+
+   // First face
+   i = 0;
+   face[i].x += face[i].w * dt;
+   face[i].rcell->xl = face[i].x;
+
+   // Interior faces
    for(i = 1; i < NF-1; i++)
       if(face[i].active)
       {
@@ -17,7 +21,12 @@ void MoveGrid(CELL* cell, FACE* face)
          face[i].lcell->xr = face[i].x;
          face[i].rcell->xl = face[i].x;
       }
-   
+
+   // Last face
+   i = NF-1;
+   face[i].x += face[i].w * dt;
+   face[i].lcell->xr = face[i].x;
+
    dxmin =  1.0e20;
    dxmax = -1.0e20;
    for(i=0; i<NC; ++i)

@@ -11,9 +11,33 @@ void MeshVel(FACE* face)
    
    if(ALE==0) return;
    
-   face[0].w    = 0.0;
-   face[NF-1].w = 0.0;
+   // First face
+   i = 0;
+   if(bc_left == FIXED)
+   {
+      face[i].w = 0.0;
+   }
+   else
+   {
+      Uvect(face[i].rcell, face[i].x, UR);
+      face[i].w = UR[1]/UR[0];
+   }
+   face[i].rcell->wl = face[i].w;
    
+   // Last face
+   i = NF-1;
+   if(bc_right == FIXED)
+   {
+      face[i].w = 0.0;
+   }
+   else
+   {
+      Uvect(face[i].lcell, face[i].x, UL);
+      face[i].w = UL[1]/UL[0];
+   }
+   face[i].lcell->wr = face[i].w;
+   
+   // Interior faces
    for(i = 1; i < NF-1; i++)
       if(face[i].active)
       {
@@ -25,6 +49,9 @@ void MeshVel(FACE* face)
          face[i].w = 0.5 * (vl + vr);
 //         RoeAverage(UL, UR, UA);
 //         face[i].w = UA[1]/UA[0];
+         
+         face[i].lcell->wr = face[i].w;
+         face[i].rcell->wl = face[i].w;
       }
    
    // smooth mesh velocity
