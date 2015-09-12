@@ -8,11 +8,13 @@
 #define EULER  3
 
 // Available test cases
-#define SOD      0
-#define BLAST    1
-#define LAX      2
-#define LOWD     3
-#define SHUOSHER 4
+#define SOD      10
+#define MSOD     11
+#define SSOD     12
+#define BLAST    20
+#define LAX      30
+#define LOWD     40
+#define SHUOSHER 50
 
 // Type of bc
 #define FREE      0

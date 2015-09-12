@@ -22,6 +22,10 @@ void Flux(CELL * cell, FACE * face)
          get_predictor(face[i].lcell, face[i].x, 0.5*dt, UL);
          get_predictor(face[i].rcell, face[i].x, 0.5*dt, UR);
          
+         // Mirror or reflecting bc
+         if(i==0    && bc_left==FIXED)  UL[1] = -UR[1];
+         if(i==NF-1 && bc_right==FIXED) UR[1] = -UL[1];
+         
          switch (FLUX)
          {
             case LF:

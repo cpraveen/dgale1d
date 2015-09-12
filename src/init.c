@@ -24,13 +24,40 @@ void SetTestCaseData()
       bc_left = FREE;
       bc_right= FREE;
    }
+   else if(test_case == MSOD) // Entropy problem from Toro
+   {
+      printf("Setting MSOD test case\n");
+      xmin = 0.0;
+      xmax = 1.0;
+      XS   = 0.3;
+      finaltime = 0.2;
+      
+      d_left = 1.0;   u_left = 0.75; p_left = 1.0;
+      d_right= 0.125; u_right= 0.0;  p_right= 0.1;
+      bc_left = FREE;
+      bc_right= FREE;
+   }
+   else if(test_case == SSOD) // See Springel paper
+   {
+      printf("Setting SSOD test case\n");
+      xmin = -10.0;
+      xmax =  10.0;
+      XS   = 0.0;
+      finaltime = 5.0;
+      
+      d_left = 1.0;   u_left = 0.0; p_left = 1.0;
+      d_right= 0.25; u_right= 0.0; p_right= 0.1795;
+      bc_left = FREE;
+      bc_right= FREE;
+   }
    else if(test_case == BLAST)
    {
       printf("Setting BLAST test case\n");
       xmin = 0.0;
       xmax = 1.0;
       finaltime = 0.038;
-      // reflecting bc
+      bc_left = FIXED;
+      bc_right= FIXED;
    }
    else if(test_case == LAX)
    {
@@ -246,7 +273,9 @@ void InitCondEuler(REAL x, REAL * U)
 {
    REAL V[NVAR];
    
-   if(test_case == SOD || test_case == LAX || test_case == LOWD)
+   if(test_case == SOD || test_case == LAX ||
+      test_case == MSOD || test_case == SSOD ||
+      test_case == LOWD)
       InitCondShocktube(x, V);
    else if(test_case == BLAST)
       InitCondBlast(x, V);
