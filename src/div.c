@@ -27,6 +27,9 @@ void Flux(CELL * cell, FACE * face)
             case LF:
                LFFlux(UL, UR, face[i].w, fl);
                break;
+            case ROE:
+               RoeFlux(UL, UR, face[i].w, fl);
+               break;
             default:
                printf("Error: Flux number %d not defined\n", FLUX);
                exit(0);

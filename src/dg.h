@@ -6,10 +6,7 @@
 #define UINT        int
 
 #define LF          1
-#define ECUSP       2
-#define HLLC        3
-#define AUSMDV      4
-#define LFC         5
+#define ROE         2
 
 #define CONSTANT    1
 #define LINEAR      2

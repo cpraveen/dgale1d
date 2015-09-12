@@ -36,10 +36,55 @@ void Jacobian(REAL *U, REAL A[][3])
 //-----------------------------------------------------------------------------
 /* Roe flux for 1-d euler equations */
 //-----------------------------------------------------------------------------
-void RoeFlux(REAL * Ul, REAL * Ur, REAL w, REAL * flux)
+void RoeFlux (REAL * Ul, REAL * Ur, REAL w, REAL * flux)
 {
-   printf("Oops: RoeFlux not implemented yet !!!\n");
-   exit(0);
+   REAL left[NVAR], right[NVAR];
+
+   left[0] = Ul[0];
+   left[1] = Ul[1] / Ul[0];
+   left[2] = (GAMMA-1) * ( Ul[2] - 0.5 * left[0] * left[1] * left[1]);
+
+   right[0] = Ur[0];
+   right[1] = Ur[1] / Ur[0];
+   right[2] = (GAMMA-1) * ( Ur[2] - 0.5 * right[0] * right[1] * right[1]);
+
+   REAL fl  = sqrt(left[0]);
+   REAL fr  = sqrt(right[0]);
+   REAL u   = (fl*left[1] + fr*right[1])/(fl + fr);
+
+   REAL Hl  = GAMMA*left[2]/left[0]/(GAMMA-1.0) + 0.5*pow(left[1],2);
+   REAL Hr  = GAMMA*right[2]/right[0]/(GAMMA-1.0) + 0.5*pow(right[1],2);
+
+   // average of fluxes
+   flux[0] = 0.5*(left[0]*left[1] - w*Ul[0] + right[0]*right[1] - w*Ur[0]);
+   flux[1] = 0.5*(left[2]  + left[0]  * pow(left[1],2)  - w*Ul[1] +
+                  right[2] + right[0] * pow(right[1],2) - w*Ur[1]);
+   flux[2] = 0.5*(Hl*left[0]*left[1] - w*Ul[2] + Hr*right[0]*right[1] - w*Ur[2]);
+
+   // Add conservative dissipation
+   REAL H = (fl*Hl + fr*Hr)/(fl + fr);
+   REAL a = sqrt((GAMMA-1.0)*(H - 0.5*u*u));
+   REAL R[3][3];
+   R[0][0] = R[0][1] = R[0][2] = 1.0;
+   R[1][0] = u-a; R[1][1] = u; R[1][2] = u + a;
+   R[2][0] = H - u * a; R[2][1] = 0.5*u*u; R[2][2] = H + u * a;
+
+   REAL Lambda[] = { fabs(u-w-a), fabs(u-w), fabs(u-w+a)};
+
+   REAL dU[] = {
+      Ur[0] - Ul[0],
+      Ur[1] - Ul[1],
+      Ur[2] - Ul[2]
+   };
+
+   REAL aa[3];
+   aa[1] = (GAMMA-1.0)/(a*a) * (dU[0]*(H-u*u) + u*dU[1] - dU[2]);
+   aa[0] = 0.5/a * (dU[0]*(u+a) - dU[1] - a * aa[1]);
+   aa[2] = dU[0] - aa[0] - aa[1];
+
+   for(unsigned int i=0; i<3; ++i)
+      for(unsigned int j=0; j<3; ++j)
+         flux[i] -= 0.5 * aa[j] * Lambda[j] * R[i][j];
 }
 
 //-----------------------------------------------------------------------------
