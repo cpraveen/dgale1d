@@ -14,3 +14,7 @@ plot 'sol' u 1:4 w l,'avg' u 1:4 w p
 
 set title 'Mesh size'
 plot 'h' u 2:3 w lp
+
+set key
+set title 'Fluid and mesh velocity'
+plot 'sol' u 1:3 t 'Fluid vel' w l,'h' u 2:4 t 'Mesh vel' w lp

@@ -59,6 +59,25 @@ void GaussInit()
    wg[4][3] = (322.0 + 13.0 * sqrt(70.0)) / 900.0;
    wg[4][4] = (322.0 - 13.0 * sqrt(70.0)) / 900.0;
 
+   /* GLL points */
+   xgll[0][0] = 0.0;
+
+   xgll[1][0] = -1.0;
+   xgll[1][1] = +1.0;
+   
+   xgll[2][0] = -1.0;
+   xgll[2][1] =  0.0;
+   xgll[2][2] = +1.0;
+
+   /* GLL weights */
+   wgll[0][0] = 2.0;
+
+   wgll[1][0] = 1.0;
+   wgll[1][1] = 1.0;
+   
+   wgll[2][0] = 1.0/3.0;
+   wgll[2][1] = 4.0/3.0;
+   wgll[2][2] = 1.0/3.0;
 }
 
 /* Find physical coordinates of Gauss points in each cell */

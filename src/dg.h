@@ -5,6 +5,9 @@
 #define REAL        double
 #define UINT        int
 
+#define FALSE       0
+#define TRUE        1
+
 #define LF          1
 #define ROE         2
 
@@ -25,11 +28,16 @@
  * NVAR = number of variables
  * NG = number of Gauss integration points
  */
-UINT NC, NF, NG, PORD, FLUX, NPLT;
+UINT NC, NF, NG, NGLL, PORD, FLUX, NPLT;
 
 /* xg = Gauss integration points in [-1,+1]
  * wg = corresponding weights
  */
 REAL xg[10][10], wg[10][10];
+
+/* xgll = GaussLobattoLegendre integration points in [-1,+1]
+ * wgll = corresponding weights
+ */
+REAL xgll[10][10], wgll[10][10];
 
 #endif

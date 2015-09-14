@@ -46,8 +46,8 @@ void Result(CELL * cell)
          }
          fprintf(fp2, "\n");
          
-         // mesh size
-         fprintf(fp3, "%d %e %e\n", i, cell[i].x, cell[i].h);
+         // mesh size, mesh velocity
+         fprintf(fp3, "%d %e %e %e\n", i, cell[i].x, cell[i].h, 0.5*(cell[i].wl+cell[i].wr));
       }
    fclose(fp1);
    fclose(fp2);

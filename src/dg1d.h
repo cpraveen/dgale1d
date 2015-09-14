@@ -32,11 +32,12 @@ UINT ALE;
 REAL dxmin, dxmax;
 UINT test_case;
 UINT bc_left, bc_right;
+UINT pos_lim;
 
 struct CELL
 {
    REAL x, xl, xr, wl, wr, h, *xg;
-   UINT p, ng;
+   UINT p, ng, ngll;
    REAL **U, **Re;
    struct CELL *lcell, *rcell;
    bool active;
@@ -67,6 +68,7 @@ void GaussPoints (CELL *);
 REAL ShapeFun (REAL, CELL *, UINT);
 REAL ShapeFunDeriv (REAL, CELL *, UINT);
 
+void UatGLL (CELL * cell, REAL ** U);
 void Uvect (CELL * cell, REAL x, REAL * U);
 void get_predictor(CELL *cell, REAL x, REAL t, REAL * U);
 void EulerFlux (REAL * U, REAL w, REAL * flux);

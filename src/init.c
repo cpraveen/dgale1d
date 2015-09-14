@@ -124,8 +124,16 @@ CELL* Init()
    SetTestCaseData();
 
    // Note that PORD = degree + 1
-   // Number of Gauss quadrature points
+   // Number of Gauss quadrature points = degree + 1
    NG = PORD;
+   
+   // Gauss-Lobatto points used in positivity limiter
+   NGLL = PORD;
+   if(NGLL > 3)
+   {
+      printf("Update GLL points in gauss.c\n");
+      exit(0);
+   }
 
    printf("Allocating memory and setting initial condition ...\n");
 
@@ -156,6 +164,7 @@ CELL* Init()
       cell[i].p = PORD;
 
       cell[i].ng = NG;
+      cell[i].ngll = NGLL;
       cell[i].xg = (REAL *) calloc(cell[i].ng, sizeof(REAL));
       GaussPoints(&cell[i]);
 
@@ -263,6 +272,7 @@ void ReadInput()
    fscanf(fp, "%s%lf", dummy, &Mfact);
    fscanf(fp, "%s%d", dummy, &ALE);
    fscanf(fp, "%s%d", dummy, &test_case);
+   fscanf(fp, "%s%d", dummy, &pos_lim);
    fclose(fp);
    
    NF = NC + 1;
