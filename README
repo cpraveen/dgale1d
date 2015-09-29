@@ -20,3 +20,8 @@ h   : contains cell sizes
 
 gnuplot 'plot.gnu'
 open plot.ps
+
+* Compare with exact solution
+  Run SOD test case
+  Run gnuplot
+  gnuplot> load 'sod.gnu'
