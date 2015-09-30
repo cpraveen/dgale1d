@@ -1,12 +1,20 @@
 cfl         0.8
-nc          400
+nc          100
 pord        2
 nplt        2
-flux        1
+flux        2
 M           0.0
 ale         0
-test_case   20
-pos_lim     1
+test_case   30
+pos_lim     0
 
 flux     : 1=LxF, 2=ROE
-test_case: 0=SOD, 4=SHUOSHER
+
+test_case:
+ SOD      10
+ MSOD     11
+ SSOD     12
+ BLAST    20
+ LAX      30
+ LOWD     40
+ SHUOSHER 50
