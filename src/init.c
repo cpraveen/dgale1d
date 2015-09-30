@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<assert.h>
 #include "dg.h"
 #include "dg1d.h"
 
@@ -9,13 +10,19 @@ void InitCondShocktube(REAL x, REAL * U);
 void InitCondBlast(REAL x, REAL * U);
 void InitCondShuOsher(REAL x, REAL * U);
 
+// For static mesh, domain is (xmin0, xmax0)
+// For moving mesh, domain may be extended to (xmin,xmax)
+// (xmin0,xmax0) is used to find dx, actual computational 
+// domain is (xmin,xmax)
+// If velocity near boundaries is zero, as in many test cases,
+// then these two domains are same. 
 void SetTestCaseData()
 {
    if(test_case == SOD)
    {
       printf("Setting SOD test case\n");
-      xmin = 0.0;
-      xmax = 1.0;
+      xmin0= 0.0; xmin = xmin0;
+      xmax0= 1.0; xmax = xmax0;
       XS   = 0.5;
       finaltime = 0.2;
       
@@ -27,8 +34,8 @@ void SetTestCaseData()
    else if(test_case == MSOD) // Entropy problem from Toro
    {
       printf("Setting MSOD test case\n");
-      xmin = 0.0;
-      xmax = 1.0;
+      xmin0= 0.0; xmin = xmin0;
+      xmax0= 1.0; xmax = xmax0;
       XS   = 0.3;
       finaltime = 0.2;
       
@@ -40,8 +47,8 @@ void SetTestCaseData()
    else if(test_case == SSOD) // See Springel paper
    {
       printf("Setting SSOD test case\n");
-      xmin = -10.0;
-      xmax =  10.0;
+      xmin0= -10.0; xmin = xmin0;
+      xmax0=  10.0; xmax = xmax0;
       XS   = 0.0;
       finaltime = 5.0;
       
@@ -53,8 +60,8 @@ void SetTestCaseData()
    else if(test_case == BLAST)
    {
       printf("Setting BLAST test case\n");
-      xmin = 0.0;
-      xmax = 1.0;
+      xmin0= 0.0; xmin = xmin0;
+      xmax0= 1.0; xmax = xmax0;
       finaltime = 0.038;
       bc_left = FIXED;
       bc_right= FIXED;
@@ -62,9 +69,9 @@ void SetTestCaseData()
    else if(test_case == LAX)
    {
       printf("Setting LAX test case\n");
-      xmin = -5.0;
-      xmax = +5.0;
-      XS = 0.0;
+      xmin0= -0.0;  xmin = xmin0;
+      xmax0= +10.0; xmax = xmax0;
+      XS = 5.0;
       finaltime = 1.3;
       d_left  = 0.445;
       d_right = 0.5;
@@ -80,8 +87,8 @@ void SetTestCaseData()
    else if(test_case == LOWD)
    {
       printf("Setting LOWD test case\n");
-      xmin = 0.0;
-      xmax = 1.0;
+      xmin0= 0.0; xmin = xmin0;
+      xmax0= 1.0; xmax = xmax0;
       XS = 0.5;
       finaltime = 0.15;
       d_left  = 1.0;
@@ -98,17 +105,21 @@ void SetTestCaseData()
    else if(test_case == SHUOSHER)
    {
       printf("Setting SHUOSHER test case\n");
-      xmin = -10.0;
-      xmax =  5.0;
+      xmin0= -5.0; xmin = xmin0;
+      xmax0=  5.0; xmax = xmax0;
       finaltime = 1.8;
       bc_left = FREE;
       bc_right= FREE;
+      if(ALE){ xmin = -10.0;}
    }
    else
    {
       printf("Error in SetTestCaseData\n");
       exit(0);
    }
+
+   assert(xmin0 >= xmin);
+   assert(xmax0 <= xmax);
 }
 
 /* Allocate memory for main structure and set initial conditions */
@@ -116,7 +127,7 @@ CELL* Init()
 {
    void ReadInput();
    void InitCondEuler(REAL, REAL *);
-   UINT i, j, k, l;
+   UINT i, j, k, l, ncl, ncr;
    REAL dx, U[NVAR], v;
    CELL *cell;
 
@@ -137,6 +148,19 @@ CELL* Init()
 
    printf("Allocating memory and setting initial condition ...\n");
 
+   dx  = (xmax0 - xmin0) / NC;
+
+   // For some test cases, we extend domain size,
+   // so add more cells
+   ncl = (xmin0 - xmin ) / dx;
+   ncr = (xmax  - xmax0) / dx;
+   NC += ncl + ncr;
+   NF  = NC + 1;
+
+   printf("No of cells = %d\n", NC);
+   printf("No of faces = %d\n", NF);
+   printf("         dx = %f\n", dx);
+
    cell = (CELL *) calloc(NC, sizeof(CELL));
    if(cell == NULL)
    {
@@ -144,11 +168,6 @@ CELL* Init()
       exit(0);
    }
    
-   dx = (xmax - xmin) / NC;
-   printf("No of cells = %d\n", NC);
-   printf("No of faces = %d\n", NF);
-   printf("         dx = %f\n", dx);
-
    // Initialize cells
    for(i = 0; i < NC; i++)
    {
@@ -274,8 +293,6 @@ void ReadInput()
    fscanf(fp, "%s%d", dummy, &test_case);
    fscanf(fp, "%s%d", dummy, &pos_lim);
    fclose(fp);
-   
-   NF = NC + 1;
 }
 
 /* Initial condition for Euler equation */

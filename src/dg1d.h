@@ -24,7 +24,8 @@
 REAL mass0, mass1[2][2], mass2[3][3], mass3[4][4], mass4[5][5], mass5[6][6];
 REAL cfl, dt, finaltime;
 REAL XS;                        /* Shock position */
-REAL xmin, xmax;
+REAL xmin0, xmax0;
+REAL xmin,  xmax;
 REAL d_left, u_left, p_left;
 REAL d_right, u_right, p_right;
 REAL Mfact;
