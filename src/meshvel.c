@@ -5,7 +5,7 @@
 
 void MeshVel(FACE* face)
 {
-   UINT i;
+   UINT i, it;
    UINT siter=1; // no of smoothing iterations
    REAL UL[NVAR], UR[NVAR], UA[NVAR], vl, vr;
    
@@ -55,7 +55,7 @@ void MeshVel(FACE* face)
       }
    
    // smooth mesh velocity
-   for(int it=0; it<siter; ++it)
+   for(it=0; it<siter; ++it)
    {
       for(i = 1; i < NF-1; i++)
          if(face[i].active)

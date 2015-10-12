@@ -39,6 +39,7 @@ void Jacobian(REAL *U, REAL A[][3])
 void RoeFlux (REAL * Ul, REAL * Ur, REAL w, REAL * flux)
 {
    REAL left[NVAR], right[NVAR];
+   UINT i, j;
 
    left[0] = Ul[0];
    left[1] = Ul[1] / Ul[0];
@@ -82,8 +83,8 @@ void RoeFlux (REAL * Ul, REAL * Ur, REAL w, REAL * flux)
    aa[0] = 0.5/a * (dU[0]*(u+a) - dU[1] - a * aa[1]);
    aa[2] = dU[0] - aa[0] - aa[1];
 
-   for(unsigned int i=0; i<3; ++i)
-      for(unsigned int j=0; j<3; ++j)
+   for(i=0; i<3; ++i)
+      for(j=0; j<3; ++j)
          flux[i] -= 0.5 * aa[j] * Lambda[j] * R[i][j];
 }
 
