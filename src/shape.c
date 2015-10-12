@@ -21,7 +21,7 @@ REAL ShapeFunDeriv(REAL x, CELL * cell, UINT nshape)
    REAL LegendreDeriv(REAL, UINT);
    REAL f;
 
-   x = (x - cell->x) / cell->h;
+   x = 2.0 * (x - cell->x) / cell->h;
    f = 2.0 * sqrt(2.0 * nshape + 1) / cell->h;
    return f * LegendreDeriv(x, nshape);
 }
