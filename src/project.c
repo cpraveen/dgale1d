@@ -13,6 +13,7 @@ void Project(CELL * cell)
    UINT i, j, k;
    REAL u[NVAR], ux[NVAR], uxb[NVAR], dul[NVAR], dur[NVAR], R[NVAR][NVAR],
       Ri[NVAR][NVAR], fact;
+   REAL dxl, dxr;
 
    fact = sqrt(3.0);
 
@@ -21,10 +22,12 @@ void Project(CELL * cell)
       {
          for(j = 0; j < NVAR; j++)
          {
-            dul[j] = cell[i].U[j][0] - cell[i].lcell->U[j][0];
-            dur[j] = cell[i].rcell->U[j][0] - cell[i].U[j][0];
+            dxl = 0.5*(cell[i].h + cell[i].lcell->h);
+            dxr = 0.5*(cell[i].h + cell[i].rcell->h);
+            dul[j] = (cell[i].U[j][0] - cell[i].lcell->U[j][0])/dxl;
+            dur[j] = (cell[i].rcell->U[j][0] - cell[i].U[j][0])/dxr;
             u[j] = cell[i].U[j][0];
-            ux[j] = fact * cell[i].U[j][1];
+            ux[j] = fact * cell[i].U[j][1] / cell[i].h;
          }
          
          EigMat(u, R, Ri);
@@ -33,7 +36,7 @@ void Project(CELL * cell)
          Multi(Ri, dur);
          for(j = 0; j < NVAR; j++)
          {
-            if(fabs(ux[j]) <= Mfact * cell[i].h * cell[i].h)
+            if(fabs(ux[j]) <= Mfact * cell[i].h)
                uxb[j] = ux[j];
             else
                uxb[j] = minmod(ux[j], dul[j], dur[j]);
@@ -42,7 +45,7 @@ void Project(CELL * cell)
          
          for(j = 0; j < NVAR; j++)
          {
-            uxb[j] = uxb[j] / fact;
+            uxb[j] = cell[i].h * uxb[j] / fact;
             if(fabs(cell[i].U[j][1] - uxb[j]) > 1.0e-6)
             {
                cell[i].U[j][1] = uxb[j];
